@@ -1,0 +1,47 @@
+{
+  "name": "@local/dsh-subscription-limits",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "author": "Andrey (sc5976)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sc5976/dsh-subscription-limits.git"
+  },
+  "homepage": "https://github.com/sc5976/dsh-subscription-limits",
+  "bugs": {
+    "url": "https://github.com/sc5976/dsh-subscription-limits/issues"
+  },
+  "description": "Subscription usage limits (5-hour, weekly and monthly windows) and provider balances for DeepSeek Harness, shown on hover and localized into English, Russian, Chinese, French and Spanish.",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "dsh": {
+    "engines": {
+      "dsh": ">=0.2.2-rc.1"
+    },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  }
+}

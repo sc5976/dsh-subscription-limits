@@ -1,0 +1,3 @@
+- insert:
+    - id: subscription-limits
+      name: '@local/dsh-subscription-limits'

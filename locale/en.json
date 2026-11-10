@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Subscription limits",
+    "description": "Shows the used share of subscription limits (5-hour, weekly and monthly windows) and provider balances in a hover popover. UI languages: English, Russian, Chinese, French and Spanish."
+  }
+}
