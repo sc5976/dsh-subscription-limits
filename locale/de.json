@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Abo-Limits",
+    "description": "Zeigt den verbrauchten Anteil der Abo-Limits (5-Stunden-, Wochen- und Monatsfenster) und Anbieter-Guthaben in einem Popover beim Darüberfahren. Abo-Tarife und vorausbezahlte Guthaben werden unterstützt; offizielle Abos von ChatGPT, Claude, Gemini, Copilot und Cursor werden nicht erfasst. Oberflächensprachen: Englisch, Russisch, Chinesisch, Französisch, Spanisch, Deutsch, Portugiesisch, Japanisch und Koreanisch."
+  }
+}

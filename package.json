@@ -1,6 +1,6 @@
 {
   "name": "@local/dsh-subscription-limits",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "author": "Andrey (sc5976)",
@@ -12,7 +12,7 @@
   "bugs": {
     "url": "https://github.com/sc5976/dsh-subscription-limits/issues"
   },
-  "description": "Subscription usage limits (5-hour, weekly and monthly windows) and provider balances for DeepSeek Harness, shown on hover and localized into English, Russian, Chinese, French and Spanish.",
+  "description": "Subscription usage limits (5-hour, weekly and monthly windows) and provider balances for DeepSeek Harness, shown on hover and localized into English, Russian, Chinese, French, Spanish, German, Portuguese, Japanese and Korean. Covers subscription plans (OpenCode Go, MiniMax, GLM, Kimi) and prepaid balances (OpenRouter, DeepSeek, Moonshot); first-party ChatGPT, Claude, Gemini, Copilot and Cursor subscriptions are not tracked.",
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",

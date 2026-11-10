@@ -4,9 +4,10 @@
  * A compact chip in the composer dock. Hovering (or clicking to pin) opens a
  * floating card with the used share of every subscription window the host
  * reports: 5-hour session, week, month, plus prepaid balances. The card ships
- * five UI languages (English by default, with a switcher for Russian, Chinese,
- * French and Spanish); the choice persists per browser. All provider probing
- * happens host-side, so this module only reads same-origin JSON.
+ * nine UI languages (English by default, with a switcher for Russian, Chinese,
+ * French, Spanish, German, Portuguese, Japanese and Korean); the choice
+ * persists per browser. All provider probing happens host-side, so this module
+ * only reads same-origin JSON.
  */
 
 window.__ModuleLoader__.load({
@@ -20,7 +21,7 @@ window.__ModuleLoader__.load({
     const API_PATH = 'api/subscription-limits/overview'
     const POLL_MS = 60_000
     const HIDE_DELAY_MS = 180
-    const POPOVER_WIDTH = 360
+    const POPOVER_WIDTH = 380
     const LANGUAGE_KEY = 'dsh-subscription-limits.lang'
     const DEFAULT_LANGUAGE = 'en'
 
@@ -126,6 +127,86 @@ window.__ModuleLoader__.load({
         resetAt: 'se restablece a las {time}',
         resetOn: 'se restablece el {date} a las {time}',
       },
+      de: {
+        title: 'Abo-Limits',
+        subscriptions: 'Abos',
+        balances: 'Guthaben',
+        balance: 'Guthaben',
+        updated: 'aktualisiert um {time}',
+        loading: 'Wird geladen…',
+        noData: 'Keine Abo-Daten',
+        noProviders: 'Keine Anbieter konfiguriert',
+        refreshNote: 'aktualisiert jede Minute',
+        pinHint: 'zum Anheften klicken',
+        pinnedHint: 'angeheftet · zum Schließen klicken',
+        language: 'Sprache',
+        chipTitle: 'Abo-Limits — für Details mit der Maus darüberfahren',
+        error: 'keine Daten',
+        windows: { '5h': '5 Stunden', week: 'Woche', month: 'Monat' },
+        chip: { '5h': '5 Std', week: 'Wo.', month: 'Mon.' },
+        resetAt: 'Reset um {time}',
+        resetOn: 'Reset am {date} um {time}',
+      },
+      pt: {
+        title: 'Limites da assinatura',
+        subscriptions: 'Assinaturas',
+        balances: 'Saldos',
+        balance: 'Saldo',
+        updated: 'atualizado às {time}',
+        loading: 'Carregando…',
+        noData: 'Sem dados de assinatura',
+        noProviders: 'Nenhum provedor configurado',
+        refreshNote: 'atualiza a cada minuto',
+        pinHint: 'clique para fixar',
+        pinnedHint: 'fixado · clique para fechar',
+        language: 'Idioma',
+        chipTitle: 'Limites da assinatura — passe o cursor para ver os detalhes',
+        error: 'sem dados',
+        windows: { '5h': '5 horas', week: 'Semana', month: 'Mês' },
+        chip: { '5h': '5 h', week: 'sem.', month: 'mês' },
+        resetAt: 'reinicia às {time}',
+        resetOn: 'reinicia em {date} às {time}',
+      },
+      ja: {
+        title: 'サブスクリプションの上限',
+        subscriptions: 'サブスクリプション',
+        balances: '残高',
+        balance: '残高',
+        updated: '{time} 更新',
+        loading: '読み込み中…',
+        noData: 'サブスクリプションのデータがありません',
+        noProviders: 'プロバイダーが設定されていません',
+        refreshNote: '1分ごとに更新',
+        pinHint: 'クリックで固定',
+        pinnedHint: '固定中 · クリックで閉じる',
+        language: '言語',
+        chipTitle: 'サブスクリプションの上限 — カーソルを合わせると詳細を表示',
+        error: 'データなし',
+        windows: { '5h': '5時間', week: '週間', month: '月間' },
+        chip: { '5h': '5h', week: '週', month: '月' },
+        resetAt: '{time} にリセット',
+        resetOn: '{date} {time} にリセット',
+      },
+      ko: {
+        title: '구독 한도',
+        subscriptions: '구독',
+        balances: '잔액',
+        balance: '잔액',
+        updated: '{time} 업데이트',
+        loading: '불러오는 중…',
+        noData: '구독 데이터가 없습니다',
+        noProviders: '설정된 프로바이더가 없습니다',
+        refreshNote: '1분마다 새로 고침',
+        pinHint: '클릭하여 고정',
+        pinnedHint: '고정됨 · 클릭하여 닫기',
+        language: '언어',
+        chipTitle: '구독 한도 — 자세히 보려면 마우스를 올리세요',
+        error: '데이터 없음',
+        windows: { '5h': '5시간', week: '주간', month: '월간' },
+        chip: { '5h': '5h', week: '주', month: '월' },
+        resetAt: '{time}에 재설정',
+        resetOn: '{date} {time}에 재설정',
+      },
     }
 
     /** The languages the switcher offers, in display order. */
@@ -135,10 +216,24 @@ window.__ModuleLoader__.load({
       ['zh', '中文'],
       ['fr', 'Français'],
       ['es', 'Español'],
+      ['de', 'Deutsch'],
+      ['pt', 'Português'],
+      ['ja', '日本語'],
+      ['ko', '한국어'],
     ]
 
     /** BCP 47 tags for date/time formatting. */
-    const LOCALE_TAG = { en: 'en-GB', ru: 'ru-RU', zh: 'zh-CN', fr: 'fr-FR', es: 'es-ES' }
+    const LOCALE_TAG = {
+      en: 'en-GB',
+      ru: 'ru-RU',
+      zh: 'zh-CN',
+      fr: 'fr-FR',
+      es: 'es-ES',
+      de: 'de-DE',
+      pt: 'pt-BR',
+      ja: 'ja-JP',
+      ko: 'ko-KR',
+    }
 
     /** Provider brand abbreviations that stay the same in every language. */
     const SHORT_NAME = {
@@ -269,12 +364,13 @@ window.__ModuleLoader__.load({
         }, formatPercent(window.percent)),
         h('span', {
           style: {
-            width: 118,
-            flex: '0 0 118px',
+            width: 132,
+            flex: '0 0 132px',
             textAlign: 'right',
             color: 'var(--dsw-alias-label-tertiary)',
             fontSize: 10.5,
-            whiteSpace: 'nowrap',
+            lineHeight: 1.25,
+            overflowWrap: 'break-word',
           },
         }, formatReset(window.resetsAt, language, t)),
       )

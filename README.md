@@ -8,7 +8,8 @@ Subscription quota and balance monitor for [DeepSeek Harness](https://github.com
 
 - **Quotas** — OpenCode Go, MiniMax, GLM Coding Plan (Z.AI / BigModel), Kimi For Coding.
 - **Balances** — OpenRouter, DeepSeek, Moonshot.
-- **Five UI languages** — English (default), Russian, Chinese, French, Spanish; switch in the card, the choice is remembered.
+- **Frontier models** — supported only through those plans (e.g. Claude models inside OpenCode Go); first-party ChatGPT, Claude, Gemini, Copilot and Cursor subscriptions are not tracked; they expose no public usage API.
+- **Nine UI languages** — English (default), Russian, Chinese, French, Spanish, German, Portuguese, Japanese, Korean; switch in the card, the choice is remembered.
 - **No extra settings tab** — a compact chip near the input plus a hover/pinned card.
 - Keys are read host-side only; the browser receives percentages and amounts, never secrets.
 
@@ -17,7 +18,7 @@ Subscription quota and balance monitor for [DeepSeek Harness](https://github.com
 **DSH Desktop** — Settings → Plugins → install by package source:
 
 ```
-github:sc5976/dsh-subscription-limits#v1.1.0
+github:sc5976/dsh-subscription-limits#v1.2.0
 ```
 
 Then refresh the page (F5).
@@ -25,7 +26,7 @@ Then refresh the page (F5).
 **CLI profile**
 
 ```bash
-dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits#v1.1.0"
+dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits#v1.2.0"
 ```
 
 Add the package name to the profile's `dsh.profile.bundles` if the plugin manager did not.
@@ -58,10 +59,12 @@ Add or override providers through the row's `config`:
 
 A new response format is one parser function in `index.js` returning `{ windows: [{ key: '5h' | 'week' | 'month', percent, resetsAt }] }` or `{ balance: { amount, currency } }`.
 
+UI copy is the `STRINGS` table in `client.js`; a new language is one block there plus a matching `locale/<code>.json` for the plugin card.
+
 ## Development
 
 ```bash
-node test-client.mjs      # widget renders in all five languages, registers in the composer dock
+node test-client.mjs      # widget renders in all nine languages, registers in the composer dock
 node test-adapters.mjs    # provider response parsers
 ```
 
@@ -80,7 +83,8 @@ MIT — see [LICENSE](LICENSE).
 
 - **Квоты** — OpenCode Go, MiniMax, GLM Coding Plan (Z.AI / BigModel), Kimi For Coding.
 - **Балансы** — OpenRouter, DeepSeek, Moonshot.
-- **Пять языков интерфейса** — английский (по умолчанию), русский, китайский, французский, испанский; переключатель в карточке, выбор запоминается.
+- **Передовые модели** — только через эти планы (например, модели Claude внутри OpenCode Go); официальные подписки ChatGPT, Claude, Gemini, Copilot и Cursor не отслеживаются — у них нет публичного API учёта использования.
+- **Девять языков интерфейса** — английский (по умолчанию), русский, китайский, французский, испанский, немецкий, португальский, японский, корейский; переключатель в карточке, выбор запоминается.
 - **Без отдельной вкладки настроек** — чип рядом с полем ввода и карточка по наведению/закреплению.
 - Ключи читаются только на стороне хоста; в браузер уходят проценты и суммы, но не секреты.
 
@@ -89,7 +93,7 @@ MIT — see [LICENSE](LICENSE).
 **DSH Desktop** — Настройки → Плагины → установить по источнику:
 
 ```
-github:sc5976/dsh-subscription-limits#v1.1.0
+github:sc5976/dsh-subscription-limits#v1.2.0
 ```
 
 Затем обновите страницу (F5).
@@ -97,7 +101,7 @@ github:sc5976/dsh-subscription-limits#v1.1.0
 **CLI-профиль**
 
 ```bash
-dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits#v1.1.0"
+dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits#v1.2.0"
 ```
 
 Имя пакета добавьте в `dsh.profile.bundles` профиля, если менеджер плагинов не сделал это сам.
@@ -130,10 +134,12 @@ dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits#v1.1.0
 
 Новый формат ответа — одна функция-парсер в `index.js`, возвращающая `{ windows: [{ key: '5h' | 'week' | 'month', percent, resetsAt }] }` или `{ balance: { amount, currency } }`.
 
+Тексты интерфейса — таблица `STRINGS` в `client.js`; для нового языка нужен блок там и парный `locale/<code>.json` для карточки плагина.
+
 ## Разработка
 
 ```bash
-node test-client.mjs      # рендер виджета на всех пяти языках, регистрация в composer dock
+node test-client.mjs      # рендер виджета на всех девяти языках, регистрация в composer dock
 node test-adapters.mjs    # парсеры ответов провайдеров
 ```
 

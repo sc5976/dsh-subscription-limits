@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "Límites de suscripción",
-    "description": "Muestra la parte usada de los límites de suscripción (ventanas de 5 horas, semana y mes) y los saldos de los proveedores en una ventana emergente. Idiomas de la interfaz: inglés, ruso, chino, francés y español."
+    "description": "Muestra la parte usada de los límites de suscripción (ventanas de 5 horas, semana y mes) y los saldos de los proveedores en una ventana emergente. Se admiten planes de suscripción y saldos prepagados; las suscripciones oficiales de ChatGPT, Claude, Gemini, Copilot y Cursor no se supervisan. Idiomas de la interfaz: inglés, ruso, chino, francés, español, alemán, portugués, japonés y coreano."
   }
 }

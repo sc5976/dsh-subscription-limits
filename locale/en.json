@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "Subscription limits",
-    "description": "Shows the used share of subscription limits (5-hour, weekly and monthly windows) and provider balances in a hover popover. UI languages: English, Russian, Chinese, French and Spanish."
+    "description": "Shows the used share of subscription limits (5-hour, weekly and monthly windows) and provider balances in a hover popover. Subscription plans and prepaid balances are supported; first-party ChatGPT, Claude, Gemini, Copilot and Cursor subscriptions are not tracked. UI languages: English, Russian, Chinese, French, Spanish, German, Portuguese, Japanese and Korean."
   }
 }

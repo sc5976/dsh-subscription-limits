@@ -135,8 +135,12 @@ const EXPECTED_TITLES = {
   zh: '订阅额度',
   fr: 'Limites d’abonnement',
   es: 'Límites de suscripción',
+  de: 'Abo-Limits',
+  pt: 'Limites da assinatura',
+  ja: 'サブスクリプションの上限',
+  ko: '구독 한도',
 }
-const LANGUAGE_NAMES = ['English', 'Русский', '中文', 'Français', 'Español']
+const LANGUAGE_NAMES = ['English', 'Русский', '中文', 'Français', 'Español', 'Deutsch', 'Português', '日本語', '한국어']
 
 for (const [language, title] of Object.entries(EXPECTED_TITLES)) {
   const tree = renderWith(language)
@@ -161,4 +165,14 @@ const russianFlat = JSON.stringify(renderWith('ru'))
 assert.ok(russianFlat.includes('5ч 2%'), 'ru chip shows the 5-hour window')
 assert.ok(russianFlat.includes('Неделя'), 'ru render names the week window')
 
-console.log('OK: client bundle renders all five languages and registers the composer-dock widget')
+// The newly added languages render their own labels too.
+const germanFlat = JSON.stringify(renderWith('de'))
+assert.ok(germanFlat.includes('Woche'), 'de render names the week window')
+const portugueseFlat = JSON.stringify(renderWith('pt'))
+assert.ok(portugueseFlat.includes('Semana'), 'pt render names the week window')
+const japaneseFlat = JSON.stringify(renderWith('ja'))
+assert.ok(japaneseFlat.includes('週間'), 'ja render names the week window')
+const koreanFlat = JSON.stringify(renderWith('ko'))
+assert.ok(koreanFlat.includes('주간'), 'ko render names the week window')
+
+console.log('OK: client bundle renders all nine languages and registers the composer-dock widget')

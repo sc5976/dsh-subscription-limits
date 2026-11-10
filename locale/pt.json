@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Limites da assinatura",
+    "description": "Mostra a parte usada dos limites da assinatura (janelas de 5 horas, semana e mês) e os saldos dos provedores em um popover ao passar o cursor. Planos de assinatura e saldos pré-pagos são suportados; assinaturas oficiais do ChatGPT, Claude, Gemini, Copilot e Cursor não são monitoradas. Idiomas da interface: inglês, russo, chinês, francês, espanhol, alemão, português, japonês e coreano."
+  }
+}
