@@ -56,8 +56,9 @@ const React = {
 }
 
 const exportsObject = captured.factory((name) => {
-  assert.equal(name, 'react')
-  return React
+  if (name === 'react') return React
+  if (name === 'react-dom') return { createPortal: (node) => node }
+  throw new Error('unexpected require: ' + name)
 })
 assert.deepEqual(exportsObject.inject, ['slots'])
 assert.equal(typeof exportsObject.apply, 'function')

@@ -17,6 +17,21 @@ window.__ModuleLoader__.load({
     const h = React.createElement
     const { useState, useEffect, useRef, useCallback } = React
 
+    /**
+     * The card is anchored to the chip with viewport coordinates, so it must
+     * not live inside the composer tree: an ancestor with a transform or
+     * filter would turn `position: fixed` into a containing block relative to
+     * that ancestor and shift the card away from the chip. Portal it to the
+     * document body when react-dom is available.
+     */
+    let createPortal = null
+    try {
+      const ReactDOM = require('react-dom')
+      if (ReactDOM && typeof ReactDOM.createPortal === 'function') createPortal = ReactDOM.createPortal
+    } catch {
+      // Without react-dom the card renders beside the chip as before.
+    }
+
     /** Document-relative so a sub-path deployment still resolves it. */
     const API_PATH = 'api/subscription-limits/overview'
     const POLL_MS = 60_000
@@ -454,6 +469,8 @@ window.__ModuleLoader__.load({
       const [position, setPosition] = useState(null)
       const [language, setLanguage] = useState(readLanguage)
       const rootRef = useRef(null)
+      const chipRef = useRef(null)
+      const popoverRef = useRef(null)
       const hideTimer = useRef(null)
       const t = STRINGS[language] ?? STRINGS[DEFAULT_LANGUAGE]
 
@@ -492,7 +509,9 @@ window.__ModuleLoader__.load({
       useEffect(() => {
         if (!pinned) return undefined
         const onPointerDown = (event) => {
-          if (rootRef.current && !rootRef.current.contains(event.target)) {
+          const inRoot = rootRef.current && rootRef.current.contains(event.target)
+          const inCard = popoverRef.current && popoverRef.current.contains(event.target)
+          if (!inRoot && !inCard) {
             setPinned(false)
             setOpen(false)
           }
@@ -501,17 +520,40 @@ window.__ModuleLoader__.load({
         return () => document.removeEventListener('mousedown', onPointerDown)
       }, [pinned])
 
+      /**
+       * Anchor the card to the chip: left edges aligned while that fits the
+       * viewport, right edges once the chip hugs the right side; the card
+       * opens 8px above the chip and never leaves the viewport.
+       */
+      const reposition = useCallback(() => {
+        const chip = chipRef.current
+        if (!chip) return
+        const rect = chip.getBoundingClientRect()
+        const margin = 8
+        let left = rect.left
+        if (left + POPOVER_WIDTH > window.innerWidth - margin) left = rect.right - POPOVER_WIDTH
+        left = Math.max(margin, Math.min(left, window.innerWidth - POPOVER_WIDTH - margin))
+        const bottom = Math.max(margin, Math.min(window.innerHeight - rect.top + margin, window.innerHeight - margin))
+        setPosition({ left, bottom })
+      }, [])
+
       const show = useCallback(() => {
         clearTimeout(hideTimer.current)
-        const element = rootRef.current
-        if (!element) return
-        const rect = element.getBoundingClientRect()
-        const left = Math.max(8, Math.min(rect.left, window.innerWidth - POPOVER_WIDTH - 8))
-        const bottom = Math.max(8, window.innerHeight - rect.top + 8)
-        setPosition({ left, bottom })
+        reposition()
         setOpen(true)
         load()
-      }, [load])
+      }, [load, reposition])
+
+      // Keep the anchored alignment while the card is open.
+      useEffect(() => {
+        if (!open) return undefined
+        window.addEventListener('resize', reposition)
+        window.addEventListener('scroll', reposition, true)
+        return () => {
+          window.removeEventListener('resize', reposition)
+          window.removeEventListener('scroll', reposition, true)
+        }
+      }, [open, reposition])
 
       const hideSoon = useCallback(() => {
         clearTimeout(hideTimer.current)
@@ -559,8 +601,9 @@ window.__ModuleLoader__.load({
       }
       const chipText = parts.length > 0 ? parts.join(' · ') : t.title
 
-      const popover = open && position
+      const popoverCard = open && position
         ? h('div', {
+            ref: popoverRef,
             role: 'dialog',
             'aria-label': t.title,
             onMouseEnter: cancelHide,
@@ -623,6 +666,9 @@ window.__ModuleLoader__.load({
             ),
           )
         : null
+      const popover = popoverCard && createPortal
+        ? createPortal(popoverCard, document.body)
+        : popoverCard
 
       return h('div', {
         ref: rootRef,
@@ -631,6 +677,7 @@ window.__ModuleLoader__.load({
         style: { position: 'relative', display: 'inline-flex', alignItems: 'center' },
       },
         h('div', {
+          ref: chipRef,
           role: 'button',
           tabIndex: 0,
           'aria-haspopup': 'dialog',
