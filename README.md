@@ -2,12 +2,13 @@
 
 **English** | [Русский](#русский)
 
-Subscription quota and balance monitor for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). A small chip in the composer shows how much of your subscription limits is used; hover it — or click to pin — to see every provider, its 5-hour, weekly and monthly windows, reset times and prepaid balances.
+Subscription quota and balance monitor for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). A small chip in the composer shows how much of your subscription limits is used; hover it — or click to pin — to see the 5-hour, weekly and monthly windows, reset times and prepaid balances. By default the chip and card are scoped to the provider that serves the session's current model; the **All** switch next to the language selector widens them to every tracked provider.
 
 ## What it is
 
 - **Quotas** — OpenCode Go, MiniMax, GLM Coding Plan (Z.AI / BigModel), Kimi For Coding.
 - **Balances** — OpenRouter, DeepSeek, Moonshot.
+- **Scoped by default** — only the current model's provider is shown; the **All** toggle (remembered per browser) lists every provider.
 - **Frontier models** — supported only through those plans (e.g. Claude models inside OpenCode Go); first-party ChatGPT, Claude, Gemini, Copilot and Cursor subscriptions are not tracked; they expose no public usage API.
 - **Nine UI languages** — English (default), Russian, Chinese, French, Spanish, German, Portuguese, Japanese, Korean; switch in the card, the choice is remembered.
 - **No extra settings tab** — a compact chip near the input plus a hover/pinned card.
@@ -64,7 +65,7 @@ UI copy is the `STRINGS` table in `client.js`; a new language is one block there
 ## Development
 
 ```bash
-node test-client.mjs      # widget renders in all nine languages, registers in the composer dock
+node test-client.mjs      # widget renders in all nine languages, registers in the composer dock, scopes to the current model
 node test-adapters.mjs    # provider response parsers
 ```
 
@@ -77,12 +78,13 @@ MIT — see [LICENSE](LICENSE).
 <a id="русский"></a>
 # dsh-subscription-limits
 
-Монитор квот и балансов подписок для [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). Компактный чип у поля ввода показывает, сколько израсходовано от лимитов подписки; при наведении (или клике — чтобы закрепить) раскрывается карточка со всеми провайдерами, окнами 5 часов / неделя / месяц, временем сброса и балансами.
+Монитор квот и балансов подписок для [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). Компактный чип у поля ввода показывает, сколько израсходовано от лимитов подписки; при наведении (или клике — чтобы закрепить) раскрывается карточка с окнами 5 часов / неделя / месяц, временем сброса и балансами. По умолчанию чип и карточка показывают только провайдера текущей модели сессии; переключатель **Все** рядом с выбором языка расширяет список до всех отслеживаемых провайдеров.
 
 ## Что это
 
 - **Квоты** — OpenCode Go, MiniMax, GLM Coding Plan (Z.AI / BigModel), Kimi For Coding.
 - **Балансы** — OpenRouter, DeepSeek, Moonshot.
+- **Фильтр по текущей модели** — по умолчанию виден только провайдер текущей модели; переключатель **Все** (запоминается в браузере) показывает всех провайдеров.
 - **Передовые модели** — только через эти планы (например, модели Claude внутри OpenCode Go); официальные подписки ChatGPT, Claude, Gemini, Copilot и Cursor не отслеживаются — у них нет публичного API учёта использования.
 - **Девять языков интерфейса** — английский (по умолчанию), русский, китайский, французский, испанский, немецкий, португальский, японский, корейский; переключатель в карточке, выбор запоминается.
 - **Без отдельной вкладки настроек** — чип рядом с полем ввода и карточка по наведению/закреплению.
@@ -139,7 +141,7 @@ dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits#v1.2.0
 ## Разработка
 
 ```bash
-node test-client.mjs      # рендер виджета на всех девяти языках, регистрация в composer dock
+node test-client.mjs      # рендер виджета на всех девяти языках, регистрация в composer dock, фильтр по текущей модели
 node test-adapters.mjs    # парсеры ответов провайдеров
 ```
 

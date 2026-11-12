@@ -42,9 +42,10 @@ const baseReact = {
   useEffect() {},
   useRef(value) { return { current: value === undefined ? null : value } },
   useCallback(fn) { return fn },
+  useSyncExternalStore(_subscribe, getSnapshot) { return getSnapshot() },
 }
 
-// The widget's useState order: state, open, pinned, position, language.
+// The widget's useState order: state, open, pinned, position, language, showAll.
 const presetQueue = []
 const React = {
   ...baseReact,
@@ -66,7 +67,8 @@ assert.equal(typeof exportsObject.apply, 'function')
 // --- fake client context --------------------------------------------------
 let injection = null
 let registered = null
-exportsObject.apply({
+const slotsOnly = {
+  get() { return undefined },
   slots: {
     inject(ownerKey, callback) {
       injection = { ownerKey }
@@ -78,11 +80,36 @@ exportsObject.apply({
       return () => {}
     },
   },
-})
+}
+exportsObject.apply(slotsOnly)
 assert.equal(injection.ownerKey, 'conversation.composer.dock')
 assert.equal(registered.options.name, 'conversation.composer.dock')
 assert.equal(registered.options.id, 'subscription-limits')
 assert.equal(typeof registered.component, 'function')
+assert.equal(typeof registered.options.inject, 'function')
+assert.deepEqual(registered.options.inject('session-1'), {}, 'without modelDirectories the widget falls back to every provider')
+
+// With the model-selection service present, the slot inject exposes the
+// session's model store plus its catalog loader.
+const modelStore = {
+  snapshot: {
+    current: { provider: 'minimax', model: 'MiniMax-M3' },
+    groups: [{ id: 'minimax', name: 'MiniMax', models: [{ id: 'MiniMax-M3', name: 'MiniMax-M3' }] }],
+  },
+  getSnapshot() { return this.snapshot },
+  subscribe() { return () => {} },
+}
+const withModels = {
+  ...slotsOnly,
+  get(name) {
+    if (name !== 'modelDirectories') return undefined
+    return { directoryFor(sessionId) { return { store: modelStore, load: async () => {} } } }
+  },
+}
+exportsObject.apply(withModels)
+const injected = registered.options.inject('session-1')
+assert.equal(injected.modelStore, modelStore, 'slot inject exposes the model store')
+assert.equal(typeof injected.loadModels, 'function', 'slot inject exposes the catalog loader')
 
 // --- canned host overview -------------------------------------------------
 const overview = {
@@ -113,21 +140,28 @@ const overview = {
 }
 
 const LANG_KEY = 'dsh-subscription-limits.lang'
-function renderWith(language) {
+const SHOW_ALL_KEY = 'dsh-subscription-limits.showAll'
+function renderWith(language, options = {}) {
   const storage = {
-    getItem(key) { return key === LANG_KEY ? language : null },
+    getItem(key) {
+      if (key === LANG_KEY) return language
+      if (key === SHOW_ALL_KEY) return options.showAll ? '1' : null
+      return null
+    },
     setItem() {},
   }
   globalThis.localStorage = storage
   window.localStorage = storage
   presetQueue.length = 0
   presetQueue.push(
-    overview,
+    options.overview ?? overview,
     true, // popover open
     false, // not pinned
     { left: 20, bottom: 80 }, // anchored position
   )
-  return registered.component({})
+  const props = {}
+  if (options.modelStore !== undefined) props.modelStore = options.modelStore
+  return registered.component(props)
 }
 
 const EXPECTED_TITLES = {
@@ -176,4 +210,43 @@ assert.ok(japaneseFlat.includes('週間'), 'ja render names the week window')
 const koreanFlat = JSON.stringify(renderWith('ko'))
 assert.ok(koreanFlat.includes('주간'), 'ko render names the week window')
 
-console.log('OK: client bundle renders all nine languages and registers the composer-dock widget')
+// The scope switch sits in the card header, left of the language select, and
+// only appears when the host exposes the session's model selection.
+for (const [language, label] of Object.entries({ en: 'All', ru: 'Все', zh: '全部', fr: 'Tout', es: 'Todo', de: 'Alle', pt: 'Tudo', ja: 'すべて', ko: '전체' })) {
+  const tree = renderWith(language, { modelStore })
+  const flat = JSON.stringify(tree)
+  assert.ok(flat.includes('"role":"switch"'), language + ': scope switch rendered')
+  assert.ok(flat.includes(label), language + ': scope switch copy')
+}
+
+// Without model data the switch is absent and every provider is listed.
+const unscopedFlat = JSON.stringify(renderWith('en'))
+assert.ok(!unscopedFlat.includes('"role":"switch"'), 'no scope switch without model data')
+assert.ok(unscopedFlat.includes('OpenCode Go') && unscopedFlat.includes('MiniMax Coding Plan'), 'unscoped render lists every plan')
+assert.ok(unscopedFlat.includes('10.00'), 'unscoped render lists balances')
+
+// A current model on an untracked route cannot narrow anything: list it all.
+const unknownStore = {
+  snapshot: { current: { provider: 'deepseek-account', model: 'deepseek-chat' }, groups: [] },
+  getSnapshot() { return this.snapshot },
+  subscribe() { return () => {} },
+}
+const untrackedFlat = JSON.stringify(renderWith('en', { modelStore: unknownStore }))
+assert.ok(untrackedFlat.includes('OpenCode Go') && untrackedFlat.includes('10.00'), 'untracked route keeps every provider')
+assert.ok(!untrackedFlat.includes('Current model ·'), 'untracked route shows no current-model caption')
+
+// A known current model narrows the chip and card to its provider only.
+const scopedFlat = JSON.stringify(renderWith('en', { modelStore }))
+assert.ok(scopedFlat.includes('MiniMax Coding Plan'), 'scoped render shows the current model provider')
+assert.ok(!scopedFlat.includes('OpenCode Go'), 'scoped render hides other plans')
+assert.ok(!scopedFlat.includes('10.00'), 'scoped render hides unrelated balances')
+assert.ok(scopedFlat.includes('Current model · MiniMax-M3'), 'scoped render names the current model')
+assert.ok(scopedFlat.includes('"aria-checked":false'), 'scope switch is off by default')
+
+// The switch widens back to every provider.
+const expandedFlat = JSON.stringify(renderWith('en', { modelStore, showAll: true }))
+assert.ok(expandedFlat.includes('OpenCode Go') && expandedFlat.includes('MiniMax Coding Plan'), 'expanded render lists every plan')
+assert.ok(expandedFlat.includes('10.00'), 'expanded render lists balances')
+assert.ok(expandedFlat.includes('"aria-checked":true'), 'scope switch reports the expanded state')
+
+console.log('OK: client bundle renders all nine languages, registers the composer-dock widget, and scopes providers to the current model')

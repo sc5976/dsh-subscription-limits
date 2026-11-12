@@ -6,8 +6,10 @@
  * reports: 5-hour session, week, month, plus prepaid balances. The card ships
  * nine UI languages (English by default, with a switcher for Russian, Chinese,
  * French, Spanish, German, Portuguese, Japanese and Korean); the choice
- * persists per browser. All provider probing happens host-side, so this module
- * only reads same-origin JSON.
+ * persists per browser. By default the chip and card show only the provider
+ * that serves the session's current model; an "All" switch next to the
+ * language selector widens them to every tracked provider. All provider
+ * probing happens host-side, so this module only reads same-origin JSON.
  */
 
 window.__ModuleLoader__.load({
@@ -15,7 +17,7 @@ window.__ModuleLoader__.load({
   factory(require) {
     const React = require('react')
     const h = React.createElement
-    const { useState, useEffect, useRef, useCallback } = React
+    const { useState, useEffect, useRef, useCallback, useSyncExternalStore } = React
 
     /**
      * The card is anchored to the chip with viewport coordinates, so it must
@@ -38,6 +40,7 @@ window.__ModuleLoader__.load({
     const HIDE_DELAY_MS = 180
     const POPOVER_WIDTH = 380
     const LANGUAGE_KEY = 'dsh-subscription-limits.lang'
+    const SHOW_ALL_KEY = 'dsh-subscription-limits.showAll'
     const DEFAULT_LANGUAGE = 'en'
 
     /** UI copy per language. `windows` name provider windows, `chip` abbreviates them. */
@@ -54,6 +57,10 @@ window.__ModuleLoader__.load({
         refreshNote: 'refreshes every minute',
         pinHint: 'click to pin',
         pinnedHint: 'pinned · click to close',
+        showAll: 'All',
+        showAllOffHint: 'Showing only the current model — click for all providers',
+        showAllOnHint: 'Showing all providers — click to show only the current model',
+        currentModel: 'Current model',
         language: 'Language',
         chipTitle: 'Subscription limits — hover for details',
         error: 'no data',
@@ -74,6 +81,10 @@ window.__ModuleLoader__.load({
         refreshNote: 'обновляется раз в минуту',
         pinHint: 'клик — закрепить',
         pinnedHint: 'закреплено · клик, чтобы закрыть',
+        showAll: 'Все',
+        showAllOffHint: 'Показаны только данные текущей модели — нажмите, чтобы увидеть всех провайдеров',
+        showAllOnHint: 'Показаны все провайдеры — нажмите, чтобы оставить только текущую модель',
+        currentModel: 'Текущая модель',
         language: 'Язык',
         chipTitle: 'Лимиты подписок — наведите для деталей',
         error: 'нет данных',
@@ -94,6 +105,10 @@ window.__ModuleLoader__.load({
         refreshNote: '每分钟刷新',
         pinHint: '点击固定',
         pinnedHint: '已固定 · 点击关闭',
+        showAll: '全部',
+        showAllOffHint: '仅显示当前模型的数据 — 点击查看所有提供商',
+        showAllOnHint: '显示所有提供商 — 点击仅查看当前模型',
+        currentModel: '当前模型',
         language: '语言',
         chipTitle: '订阅额度 — 悬停查看详情',
         error: '无数据',
@@ -114,6 +129,10 @@ window.__ModuleLoader__.load({
         refreshNote: 'actualisé chaque minute',
         pinHint: 'cliquer pour épingler',
         pinnedHint: 'épinglé · cliquer pour fermer',
+        showAll: 'Tout',
+        showAllOffHint: 'Seul le modèle actuel est affiché — cliquez pour voir tous les fournisseurs',
+        showAllOnHint: 'Tous les fournisseurs sont affichés — cliquez pour n’afficher que le modèle actuel',
+        currentModel: 'Modèle actuel',
         language: 'Langue',
         chipTitle: 'Limites d’abonnement — survolez pour les détails',
         error: 'aucune donnée',
@@ -134,6 +153,10 @@ window.__ModuleLoader__.load({
         refreshNote: 'se actualiza cada minuto',
         pinHint: 'clic para fijar',
         pinnedHint: 'fijado · clic para cerrar',
+        showAll: 'Todo',
+        showAllOffHint: 'Solo se muestra el modelo actual — haz clic para ver todos los proveedores',
+        showAllOnHint: 'Se muestran todos los proveedores — haz clic para ver solo el modelo actual',
+        currentModel: 'Modelo actual',
         language: 'Idioma',
         chipTitle: 'Límites de suscripción — pasa el cursor para ver detalles',
         error: 'sin datos',
@@ -154,6 +177,10 @@ window.__ModuleLoader__.load({
         refreshNote: 'aktualisiert jede Minute',
         pinHint: 'zum Anheften klicken',
         pinnedHint: 'angeheftet · zum Schließen klicken',
+        showAll: 'Alle',
+        showAllOffHint: 'Nur das aktuelle Modell wird angezeigt — klicken für alle Anbieter',
+        showAllOnHint: 'Alle Anbieter werden angezeigt — klicken, um nur das aktuelle Modell zu zeigen',
+        currentModel: 'Aktuelles Modell',
         language: 'Sprache',
         chipTitle: 'Abo-Limits — für Details mit der Maus darüberfahren',
         error: 'keine Daten',
@@ -174,6 +201,10 @@ window.__ModuleLoader__.load({
         refreshNote: 'atualiza a cada minuto',
         pinHint: 'clique para fixar',
         pinnedHint: 'fixado · clique para fechar',
+        showAll: 'Tudo',
+        showAllOffHint: 'Apenas o modelo atual é exibido — clique para ver todos os provedores',
+        showAllOnHint: 'Todos os provedores são exibidos — clique para ver apenas o modelo atual',
+        currentModel: 'Modelo atual',
         language: 'Idioma',
         chipTitle: 'Limites da assinatura — passe o cursor para ver os detalhes',
         error: 'sem dados',
@@ -194,6 +225,10 @@ window.__ModuleLoader__.load({
         refreshNote: '1分ごとに更新',
         pinHint: 'クリックで固定',
         pinnedHint: '固定中 · クリックで閉じる',
+        showAll: 'すべて',
+        showAllOffHint: '現在のモデルのみ表示中 — クリックで全プロバイダーを表示',
+        showAllOnHint: 'すべてのプロバイダーを表示中 — クリックで現在のモデルのみ表示',
+        currentModel: '現在のモデル',
         language: '言語',
         chipTitle: 'サブスクリプションの上限 — カーソルを合わせると詳細を表示',
         error: 'データなし',
@@ -214,6 +249,10 @@ window.__ModuleLoader__.load({
         refreshNote: '1분마다 새로 고침',
         pinHint: '클릭하여 고정',
         pinnedHint: '고정됨 · 클릭하여 닫기',
+        showAll: '전체',
+        showAllOffHint: '현재 모델만 표시 중 — 클릭하면 모든 프로바이더 표시',
+        showAllOnHint: '모든 프로바이더 표시 중 — 클릭하면 현재 모델만 표시',
+        currentModel: '현재 모델',
         language: '언어',
         chipTitle: '구독 한도 — 자세히 보려면 마우스를 올리세요',
         error: '데이터 없음',
@@ -280,6 +319,27 @@ window.__ModuleLoader__.load({
         window.localStorage.setItem(LANGUAGE_KEY, language)
       } catch {
         // Storage unavailable: the session still renders the chosen language.
+      }
+    }
+
+    /**
+     * Persisted provider scope. The default is `false`: only the provider that
+     * serves the session's current model is listed.
+     */
+    function readShowAll() {
+      try {
+        return window.localStorage.getItem(SHOW_ALL_KEY) === '1'
+      } catch {
+        return false
+      }
+    }
+
+    /** Persist the provider scope; storage failures keep the session choice. */
+    function writeShowAll(showAll) {
+      try {
+        window.localStorage.setItem(SHOW_ALL_KEY, showAll ? '1' : '0')
+      } catch {
+        // Storage unavailable: the session still renders the chosen scope.
       }
     }
 
@@ -461,23 +521,82 @@ window.__ModuleLoader__.load({
       }, ...LANGUAGES.map(([value, name]) => h('option', { key: value, value }, name)))
     }
 
+    /**
+     * Scope switch: `All` off lists only the provider of the session's current
+     * model; on lists every tracked provider.
+     */
+    function ShowAllButton(props) {
+      const { showAll, onChange, t } = props
+      const hint = showAll ? t.showAllOnHint : t.showAllOffHint
+      return h('button', {
+        type: 'button',
+        role: 'switch',
+        'aria-checked': showAll,
+        'aria-label': hint,
+        title: hint,
+        onClick: (event) => {
+          event.stopPropagation()
+          onChange(!showAll)
+        },
+        onMouseDown: (event) => event.stopPropagation(),
+        style: {
+          fontSize: 10.5,
+          lineHeight: 1.5,
+          padding: '1px 8px',
+          borderRadius: 999,
+          border: '1px solid var(--dsw-alias-border-l2, rgba(255,255,255,0.16))',
+          background: showAll
+            ? 'var(--dsw-alias-interactive-bg-hover, rgba(255,255,255,0.14))'
+            : 'transparent',
+          color: showAll
+            ? 'var(--dsw-alias-label-primary)'
+            : 'var(--dsw-alias-label-secondary)',
+          cursor: 'pointer',
+          outline: 'none',
+          whiteSpace: 'nowrap',
+        },
+      }, t.showAll)
+    }
+
     /** The widget: chip + hover/pinned popover with a language switcher. */
-    function LimitsWidget() {
+    function LimitsWidget(props) {
+      const modelStore = props && props.modelStore ? props.modelStore : undefined
+      const loadModels = props && typeof props.loadModels === 'function' ? props.loadModels : undefined
       const [state, setState] = useState({ status: 'loading', data: null, error: null })
       const [open, setOpen] = useState(false)
       const [pinned, setPinned] = useState(false)
       const [position, setPosition] = useState(null)
       const [language, setLanguage] = useState(readLanguage)
+      const [showAll, setShowAll] = useState(readShowAll)
       const rootRef = useRef(null)
       const chipRef = useRef(null)
       const popoverRef = useRef(null)
       const hideTimer = useRef(null)
       const t = STRINGS[language] ?? STRINGS[DEFAULT_LANGUAGE]
 
+      const subscribeModels = useCallback(
+        (listener) => (modelStore ? modelStore.subscribe(listener) : () => {}),
+        [modelStore],
+      )
+      const readModels = useCallback(
+        () => (modelStore ? modelStore.getSnapshot() : null),
+        [modelStore],
+      )
+      const modelState = useSyncExternalStore(subscribeModels, readModels)
+
+      useEffect(() => {
+        if (loadModels !== undefined) Promise.resolve(loadModels()).catch(() => {})
+      }, [loadModels])
+
       const changeLanguage = useCallback((next) => {
         if (STRINGS[next] === undefined) return
         writeLanguage(next)
         setLanguage(next)
+      }, [])
+
+      const changeShowAll = useCallback((next) => {
+        writeShowAll(next)
+        setShowAll(next)
       }, [])
 
       const load = useCallback(() => {
@@ -576,10 +695,32 @@ window.__ModuleLoader__.load({
       }, [pinned, show])
 
       const data = state.data
-      const providers = data && Array.isArray(data.providers) ? data.providers : []
+      const allProviders = data && Array.isArray(data.providers) ? data.providers : []
+      const currentSelection = modelState && modelState.current ? modelState.current : null
+      const currentProviderId = currentSelection && typeof currentSelection.provider === 'string'
+        ? currentSelection.provider
+        : undefined
+      /** True when the current model's route has a tracked provider to scope to. */
+      const scopesToCurrent = !showAll && currentProviderId !== undefined
+        && allProviders.some((provider) => provider.id === currentProviderId)
+      const providers = scopesToCurrent
+        ? allProviders.filter((provider) => provider.id === currentProviderId)
+        : allProviders
       const planProviders = providers.filter((provider) => provider.kind === 'plan'
         && Array.isArray(provider.windows) && provider.windows.length > 0)
       const balanceProviders = providers.filter((provider) => provider.kind === 'balance' && provider.balance)
+
+      let currentModelName
+      if (currentSelection !== null && !showAll) {
+        currentModelName = currentSelection.model
+        if (Array.isArray(modelState.groups)) {
+          const group = modelState.groups.find((entry) => entry && entry.id === currentSelection.provider)
+          const model = group && Array.isArray(group.models)
+            ? group.models.find((entry) => entry && entry.id === currentSelection.model)
+            : undefined
+          if (model && typeof model.name === 'string' && model.name !== '') currentModelName = model.name
+        }
+      }
 
       let worstPercent = -1
       for (const provider of planProviders) {
@@ -598,6 +739,11 @@ window.__ModuleLoader__.load({
           if (window) parts.push(t.chip[key] + ' ' + formatPercent(window.percent))
         }
         if (planProviders.length > 1) parts.push('+' + (planProviders.length - 1))
+      } else if (balanceProviders.length > 0) {
+        const only = balanceProviders[0]
+        parts.push(SHORT_NAME[only.id] || only.name)
+        parts.push(formatBalance(only.balance))
+        if (balanceProviders.length > 1) parts.push('+' + (balanceProviders.length - 1))
       }
       const chipText = parts.length > 0 ? parts.join(' · ') : t.title
 
@@ -630,8 +776,19 @@ window.__ModuleLoader__.load({
               style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
             },
               h('span', { style: { fontWeight: 600, fontSize: 12.5 } }, t.title),
-              h(LanguageSelect, { language, onChange: changeLanguage, label: t.language }),
+              h('div', { style: { display: 'flex', alignItems: 'center', gap: 6 } },
+                modelStore !== undefined
+                  ? h(ShowAllButton, { showAll, onChange: changeShowAll, t })
+                  : null,
+                h(LanguageSelect, { language, onChange: changeLanguage, label: t.language }),
+              ),
             ),
+            scopesToCurrent && currentModelName !== undefined
+              ? h('div', {
+                  style: { color: 'var(--dsw-alias-label-tertiary)', fontSize: 10.5, marginTop: 2 },
+                  title: currentProviderId,
+                }, t.currentModel + ' · ' + currentModelName)
+              : null,
             data
               ? h('div', {
                   style: { color: 'var(--dsw-alias-label-tertiary)', fontSize: 10.5, marginTop: 2 },
@@ -643,8 +800,8 @@ window.__ModuleLoader__.load({
               : (state.status === 'loading'
                   ? h('div', { style: { color: 'var(--dsw-alias-label-tertiary)', padding: '6px 0' } }, t.loading)
                   : h('div', { style: { color: 'var(--dsw-alias-label-tertiary)', padding: '6px 0' } },
-                      providers.length === 0 ? t.noProviders : t.noData,
-                      state.error && providers.length > 0 ? ' (' + state.error + ')' : '')),
+                      allProviders.length === 0 ? t.noProviders : t.noData,
+                      state.error && allProviders.length > 0 ? ' (' + state.error + ')' : '')),
             balanceProviders.length > 0
               ? [h('div', { key: 'balance-title', style: sectionTitleStyle }, t.balances),
                  ...balanceProviders.map((provider) => h(ProviderBlock, { key: provider.id, provider, language, t }))]
@@ -726,6 +883,27 @@ window.__ModuleLoader__.load({
       )
     }
 
+    /**
+     * The session's model-selection store, when the model-selection plugin is
+     * present. Its snapshot carries `current: { provider, model }`, which names
+     * the provider the widget scopes to by default.
+     */
+    function modelDirectoryFor(ctx, sessionId) {
+      let directories
+      try {
+        directories = ctx.get('modelDirectories')
+      } catch {
+        return undefined
+      }
+      if (directories === undefined || directories === null) return undefined
+      try {
+        const directory = directories.directoryFor(sessionId)
+        return directory === undefined || directory === null ? undefined : directory
+      } catch {
+        return undefined
+      }
+    }
+
     return {
       inject: ['slots'],
       apply(ctx) {
@@ -733,6 +911,14 @@ window.__ModuleLoader__.load({
           name: 'conversation.composer.dock',
           id: 'subscription-limits',
           order: 5,
+          inject: (sessionId) => {
+            const directory = modelDirectoryFor(ctx, sessionId)
+            if (directory === undefined) return {}
+            return {
+              modelStore: directory.store,
+              loadModels: typeof directory.load === 'function' ? () => directory.load() : undefined,
+            }
+          },
         }, LimitsWidget))
       },
     }
