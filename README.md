@@ -4,6 +4,8 @@
 
 Subscription quota and balance monitor for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). A small chip in the composer shows how much of your subscription limits is used; hover it — or click to pin — to see the 5-hour, weekly and monthly windows, reset times and prepaid balances. By default the chip and card are scoped to the provider that serves the session's current model; the **All** switch next to the language selector widens them to every tracked provider.
 
+![The card open above the composer chip in its default scope: OpenCode Go, the provider of the session's current model, with its 5-hour, week and month windows](docs/screenshot.png)
+
 ## What it is
 
 - **Quotas** — OpenCode Go, MiniMax, GLM Coding Plan (Z.AI / BigModel), Kimi For Coding.
@@ -92,6 +94,8 @@ node test-client.mjs      # widget renders in all nine languages, registers in t
 node test-adapters.mjs    # provider response parsers
 ```
 
+The README image is a headless-Chrome render of `client.js` — the real bundle, DSH's own design tokens and canned host data, opened the way a hover opens it — so it needs no profile, keys or running app.
+
 `package.json` is read by DSH with a strict JSON parser, so a UTF-8 BOM makes the package unloadable (`Unexpected token`, the bundle then reports no rows). Windows PowerShell 5.1 adds one to `Set-Content -Encoding UTF8`; write `package.json` as UTF-8 without a BOM.
 
 ## License
@@ -104,6 +108,8 @@ MIT — see [LICENSE](LICENSE).
 # dsh-subscription-limits
 
 Монитор квот и балансов подписок для [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). Компактный чип у поля ввода показывает, сколько израсходовано от лимитов подписки; при наведении (или клике — чтобы закрепить) раскрывается карточка с окнами 5 часов / неделя / месяц, временем сброса и балансами. По умолчанию чип и карточка показывают только провайдера текущей модели сессии; переключатель **Все** рядом с выбором языка расширяет список до всех отслеживаемых провайдеров.
+
+![Карточка над чипом в режиме по умолчанию: только OpenCode Go — провайдер текущей модели сессии, с окнами 5 часов, неделя и месяц](docs/screenshot.png)
 
 ## Что это
 
@@ -192,6 +198,8 @@ node test-manifest.mjs    # package.json парсится без BOM, exports и
 node test-client.mjs      # рендер виджета на всех девяти языках, регистрация в composer dock, фильтр по текущей модели
 node test-adapters.mjs    # парсеры ответов провайдеров
 ```
+
+Картинка в README — рендер `client.js` в headless Chrome: настоящий бандл, дизайн-токены самого DSH и тестовые данные хоста, карточка открыта так же, как её открывает наведение; ни профиль, ни ключи, ни запущенное приложение не нужны.
 
 DSH читает `package.json` строгим JSON-парсером, поэтому BOM в начале файла делает пакет незагружаемым (`Unexpected token`, бандл сообщает, что не объявляет ни одного ряда). Windows PowerShell 5.1 добавляет BOM при `Set-Content -Encoding UTF8`; пишите `package.json` как UTF-8 без BOM.
 
