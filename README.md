@@ -34,9 +34,9 @@ dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits"
 
 The command is `pnpm add` in the profile directory plus bundle activation, so it records the dependency, adds the package to `dsh.profile.bundles` and validates the package the way the Plugins page does. Restart DSH afterwards.
 
-Pin a release when a frozen install matters — append the tag: `github:sc5976/dsh-subscription-limits#v1.3.2`.
+Pin a release when a frozen install matters — append the tag: `github:sc5976/dsh-subscription-limits#v1.3.3`.
 
-A registry install (`dsh plugin --profile <profile> add @scope/name@1.3.2`) would work the same way and is the only form that gives the bundle page a **Versions** section and **Update** controls; this package is not published there — its name is scoped `@local/` and `private`, so GitHub is the channel.
+A registry install (`dsh plugin --profile <profile> add @scope/name@1.3.3`) would work the same way and is the only form that gives the bundle page a **Versions** section and **Update** controls; this package is not published there — its name is scoped `@local/` and `private`, so GitHub is the channel.
 
 ## Updates
 
@@ -52,7 +52,7 @@ dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits"
 
 - **Pinned installs** (`#v1.2.0`) stay on that tag until the source is re-added — without a tag, or with the tag of the release you want.
 
-Every release bumps `package.json` and is tagged (`v1.3.2`, `v1.3.1`, `v1.3.0`, …), so both forms have a defined target: no tag means the newest commit on `main`, a tag means that release permanently.
+Every release bumps `package.json` and is tagged (`v1.3.3`, `v1.3.2`, `v1.3.1`, …), so both forms have a defined target: no tag means the newest commit on `main`, a tag means that release permanently.
 
 Provider keys come from the profile's credential store and are referenced by their usual names (`OPENCODE_GO_API_KEY`, `MINIMAX_API_KEY`, `ZAI_API_KEY`, `KIMI_API_KEY`, `OPENROUTER_API_KEY`, `DEEPSEEK_API_KEY`, `MOONSHOT_API_KEY`, ...); keys discovered through `llm-pi-ai` provider profiles work as well.
 
@@ -87,6 +87,7 @@ UI copy is the `STRINGS` table in `client.js`; a new language is one block there
 ## Development
 
 ```bash
+node test-manifest.mjs    # package.json parses without a BOM, exports and bundle patch exist, locale cards load
 node test-client.mjs      # widget renders in all nine languages, registers in the composer dock, scopes to the current model
 node test-adapters.mjs    # provider response parsers
 ```
@@ -134,9 +135,9 @@ dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits"
 
 Команда — это `pnpm add` в каталоге профиля плюс активация бандла: записывается зависимость, имя пакета попадает в `dsh.profile.bundles`, а пакет проверяется так же, как на странице плагинов. После этого перезапустите DSH.
 
-Нужна «замороженная» установка — добавьте тег: `github:sc5976/dsh-subscription-limits#v1.3.2`.
+Нужна «замороженная» установка — добавьте тег: `github:sc5976/dsh-subscription-limits#v1.3.3`.
 
-Установка из реестра (`dsh plugin --profile <profile> add @scope/name@1.3.2`) работала бы так же и только она даёт на странице плагина раздел **Версии** и кнопки **Обновить**; этот пакет там не опубликован — имя в области `@local/` и стоит `private`, поэтому канал — GitHub.
+Установка из реестра (`dsh plugin --profile <profile> add @scope/name@1.3.3`) работала бы так же и только она даёт на странице плагина раздел **Версии** и кнопки **Обновить**; этот пакет там не опубликован — имя в области `@local/` и стоит `private`, поэтому канал — GitHub.
 
 ## Обновление
 
@@ -152,7 +153,7 @@ dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits"
 
 - **Установки с тегом** (`#v1.2.0`) остаются на этом теге, пока источник не добавят заново — без тега или с тегом нужного релиза.
 
-Каждый релиз поднимает версию в `package.json` и получает тег (`v1.3.2`, `v1.3.1`, `v1.3.0`, …), поэтому у обеих форм есть определённая цель: без тега — самый свежий коммит в `main`, с тегом — именно этот релиз.
+Каждый релиз поднимает версию в `package.json` и получает тег (`v1.3.3`, `v1.3.2`, `v1.3.1`, …), поэтому у обеих форм есть определённая цель: без тега — самый свежий коммит в `main`, с тегом — именно этот релиз.
 
 Ключи провайдеров берутся из credential-хранилища профиля по обычным именам (`OPENCODE_GO_API_KEY`, `MINIMAX_API_KEY`, `ZAI_API_KEY`, `KIMI_API_KEY`, `OPENROUTER_API_KEY`, `DEEPSEEK_API_KEY`, `MOONSHOT_API_KEY`, ...); ключи из профилей `llm-pi-ai` тоже находятся.
 
@@ -187,6 +188,7 @@ dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits"
 ## Разработка
 
 ```bash
+node test-manifest.mjs    # package.json парсится без BOM, exports и патч бандла на месте, локали читаются
 node test-client.mjs      # рендер виджета на всех девяти языках, регистрация в composer dock, фильтр по текущей модели
 node test-adapters.mjs    # парсеры ответов провайдеров
 ```
