@@ -415,7 +415,7 @@ window.__ModuleLoader__.load({
             flex: 1,
             height: 6,
             borderRadius: 3,
-            background: 'var(--dsw-alias-bg-layer-3, rgba(255,255,255,0.14))',
+            background: 'var(--dsw-alias-interactive-bg-hover, rgba(127,127,127,0.18))',
             overflow: 'hidden',
           },
         }, h('div', {
@@ -764,11 +764,17 @@ window.__ModuleLoader__.load({
               overflowY: 'auto',
               boxSizing: 'border-box',
               padding: '12px 14px',
-              borderRadius: 10,
-              border: '1px solid var(--dsw-alias-border-l2, rgba(255,255,255,0.14))',
-              background: 'var(--dsw-alias-bg-overlay, #202124)',
+              borderRadius: 'var(--dsw-radius-lg, 10px)',
+              border: '1px solid var(--dsw-alias-border-l1, rgba(255,255,255,0.14))',
+              // The card is a floating menu, so it uses the same material as
+              // every dsh popover: the translucent menu surface over a blurred
+              // backdrop. --dsw-alias-bg-overlay is the media dimming layer,
+              // not a surface, and reads too light on the dark theme.
+              background: 'var(--dsw-specific-menu, var(--dsw-alias-bg-layer-1, #202124))',
+              backdropFilter: 'var(--dsw-menu-backdrop-filter, blur(40px) saturate(150%))',
+              WebkitBackdropFilter: 'var(--dsw-menu-backdrop-filter, blur(40px) saturate(150%))',
               color: 'var(--dsw-alias-label-primary)',
-              boxShadow: '0 10px 32px rgba(0, 0, 0, 0.35)',
+              boxShadow: 'var(--dsw-elevation-prominent, 0 10px 32px rgba(0, 0, 0, 0.35))',
               fontSize: 12,
             },
           },
