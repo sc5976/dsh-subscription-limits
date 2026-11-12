@@ -94,7 +94,7 @@ node test-client.mjs      # widget renders in all nine languages, registers in t
 node test-adapters.mjs    # provider response parsers
 ```
 
-The README image is a headless-Chrome render of `client.js` — the real bundle, DSH's own design tokens and canned host data, opened the way a hover opens it — so it needs no profile, keys or running app.
+The README images are a headless-Chrome render of `client.js` — the real bundle, DSH's own design tokens and canned host data, opened the way a hover opens it — so they need no profile, keys or running app. Both come from the same page; the language is the widget's own stored choice (`dsh-subscription-limits.lang`), `en` for the English section and `ru` for the Russian one, so each section shows its card in its own language.
 
 `package.json` is read by DSH with a strict JSON parser, so a UTF-8 BOM makes the package unloadable (`Unexpected token`, the bundle then reports no rows). Windows PowerShell 5.1 adds one to `Set-Content -Encoding UTF8`; write `package.json` as UTF-8 without a BOM.
 
@@ -109,7 +109,7 @@ MIT — see [LICENSE](LICENSE).
 
 Монитор квот и балансов подписок для [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). Компактный чип у поля ввода показывает, сколько израсходовано от лимитов подписки; при наведении (или клике — чтобы закрепить) раскрывается карточка с окнами 5 часов / неделя / месяц, временем сброса и балансами. По умолчанию чип и карточка показывают только провайдера текущей модели сессии; переключатель **Все** рядом с выбором языка расширяет список до всех отслеживаемых провайдеров.
 
-![Карточка над чипом в режиме по умолчанию: только OpenCode Go — провайдер текущей модели сессии, с окнами 5 часов, неделя и месяц](docs/screenshot.png)
+![Карточка над чипом в режиме по умолчанию: только OpenCode Go — провайдер текущей модели сессии, с окнами 5 часов, неделя и месяц; интерфейс карточки на русском](docs/screenshot.ru.png)
 
 ## Что это
 
@@ -199,7 +199,7 @@ node test-client.mjs      # рендер виджета на всех девят
 node test-adapters.mjs    # парсеры ответов провайдеров
 ```
 
-Картинка в README — рендер `client.js` в headless Chrome: настоящий бандл, дизайн-токены самого DSH и тестовые данные хоста, карточка открыта так же, как её открывает наведение; ни профиль, ни ключи, ни запущенное приложение не нужны.
+Картинки в README — рендер `client.js` в headless Chrome: настоящий бандл, дизайн-токены самого DSH и тестовые данные хоста, карточка открыта так же, как её открывает наведение; ни профиль, ни ключи, ни запущенное приложение не нужны. Обе собираются из одной страницы, а язык берётся из того же сохранённого выбора виджета (`dsh-subscription-limits.lang`): `en` для английской части, `ru` для русской — поэтому в каждой части карточка на своём языке.
 
 DSH читает `package.json` строгим JSON-парсером, поэтому BOM в начале файла делает пакет незагружаемым (`Unexpected token`, бандл сообщает, что не объявляет ни одного ряда). Windows PowerShell 5.1 добавляет BOM при `Set-Content -Encoding UTF8`; пишите `package.json` как UTF-8 без BOM.
 
