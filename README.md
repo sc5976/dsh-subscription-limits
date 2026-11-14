@@ -36,9 +36,11 @@ dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits"
 
 The command is `pnpm add` in the profile directory plus bundle activation, so it records the dependency, adds the package to `dsh.profile.bundles` and validates the package the way the Plugins page does. Restart DSH afterwards.
 
-Pin a release when a frozen install matters — append the tag: `github:sc5976/dsh-subscription-limits#v1.3.3`.
+Pin a release when a frozen install matters — append the tag: `github:sc5976/dsh-subscription-limits#v1.3.4`.
 
-A registry install (`dsh plugin --profile <profile> add @scope/name@1.3.3`) would work the same way and is the only form that gives the bundle page a **Versions** section and **Update** controls; this package is not published there — its name is scoped `@local/` and `private`, so GitHub is the channel.
+A registry install (`dsh plugin --profile <profile> add @scope/name@1.3.4`) would work the same way and is the only form that gives the bundle page a **Versions** section and **Update** controls; this package is not published there — its name is scoped `@local/` and `private`, so GitHub is the channel.
+
+A local path is for development only. An absolute path installs the bundle as a pnpm link (`"@local/dsh-subscription-limits": "link:F:\\…"` in the profile's `package.json`), so the profile records the folder, not the code: move or rename that folder and DSH stops resolving the bundle — the plugin vanishes from the UI, while **Plugins** → its page reports `cannot resolve profile bundle "@local/dsh-subscription-limits"`. Link the working copy only while you are editing it, and put the profile you use every day back on the Git source above; otherwise the next move of the repository takes the plugin down again.
 
 ## Updates
 
@@ -54,7 +56,7 @@ dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits"
 
 - **Pinned installs** (`#v1.2.0`) stay on that tag until the source is re-added — without a tag, or with the tag of the release you want.
 
-Every release bumps `package.json` and is tagged (`v1.3.3`, `v1.3.2`, `v1.3.1`, …), so both forms have a defined target: no tag means the newest commit on `main`, a tag means that release permanently.
+Every release bumps `package.json` and is tagged (`v1.3.4`, `v1.3.3`, `v1.3.2`, `v1.3.1`, …), so both forms have a defined target: no tag means the newest commit on `main`, a tag means that release permanently.
 
 Provider keys come from the profile's credential store and are referenced by their usual names (`OPENCODE_GO_API_KEY`, `MINIMAX_API_KEY`, `ZAI_API_KEY`, `KIMI_API_KEY`, `OPENROUTER_API_KEY`, `DEEPSEEK_API_KEY`, `MOONSHOT_API_KEY`, ...); keys discovered through `llm-pi-ai` provider profiles work as well.
 
@@ -141,9 +143,11 @@ dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits"
 
 Команда — это `pnpm add` в каталоге профиля плюс активация бандла: записывается зависимость, имя пакета попадает в `dsh.profile.bundles`, а пакет проверяется так же, как на странице плагинов. После этого перезапустите DSH.
 
-Нужна «замороженная» установка — добавьте тег: `github:sc5976/dsh-subscription-limits#v1.3.3`.
+Нужна «замороженная» установка — добавьте тег: `github:sc5976/dsh-subscription-limits#v1.3.4`.
 
-Установка из реестра (`dsh plugin --profile <profile> add @scope/name@1.3.3`) работала бы так же и только она даёт на странице плагина раздел **Версии** и кнопки **Обновить**; этот пакет там не опубликован — имя в области `@local/` и стоит `private`, поэтому канал — GitHub.
+Установка из реестра (`dsh plugin --profile <profile> add @scope/name@1.3.4`) работала бы так же и только она даёт на странице плагина раздел **Версии** и кнопки **Обновить**; этот пакет там не опубликован — имя в области `@local/` и стоит `private`, поэтому канал — GitHub.
+
+Локальный путь годится только для разработки. Абсолютный путь ставит бандл как pnpm-ссылку (`"@local/dsh-subscription-limits": "link:F:\\…"` в `package.json` профиля), то есть профиль запоминает каталог, а не код: стоит перенести или переименовать папку — и DSH перестаёт резолвить бандл, плагин пропадает из интерфейса, а **Плагины** → его страница сообщает `cannot resolve profile bundle "@local/dsh-subscription-limits"`. Держите ссылку только пока правите рабочую копию, а профиль на каждый день возвращайте на Git-источник выше — иначе следующий перенос репозитория снова уронит плагин.
 
 ## Обновление
 
@@ -159,7 +163,7 @@ dsh plugin --profile <profile> add "github:sc5976/dsh-subscription-limits"
 
 - **Установки с тегом** (`#v1.2.0`) остаются на этом теге, пока источник не добавят заново — без тега или с тегом нужного релиза.
 
-Каждый релиз поднимает версию в `package.json` и получает тег (`v1.3.3`, `v1.3.2`, `v1.3.1`, …), поэтому у обеих форм есть определённая цель: без тега — самый свежий коммит в `main`, с тегом — именно этот релиз.
+Каждый релиз поднимает версию в `package.json` и получает тег (`v1.3.4`, `v1.3.3`, `v1.3.2`, `v1.3.1`, …), поэтому у обеих форм есть определённая цель: без тега — самый свежий коммит в `main`, с тегом — именно этот релиз.
 
 Ключи провайдеров берутся из credential-хранилища профиля по обычным именам (`OPENCODE_GO_API_KEY`, `MINIMAX_API_KEY`, `ZAI_API_KEY`, `KIMI_API_KEY`, `OPENROUTER_API_KEY`, `DEEPSEEK_API_KEY`, `MOONSHOT_API_KEY`, ...); ключи из профилей `llm-pi-ai` тоже находятся.
 
